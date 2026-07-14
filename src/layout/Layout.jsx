@@ -1,15 +1,17 @@
 import { Outlet } from "react-router";
-import Navbar from "./Navbar";
 
-/** The shared layout for all pages of the app */
+import Navbar from "./Navbar.jsx";
+
+/** Shared layout for every page in the application. */
 export default function Layout() {
   return (
-    <div>
+    <>
       <Navbar />
+
       <main>
         <Outlet />
       </main>
-    </div>
+    </>
   );
 }
 

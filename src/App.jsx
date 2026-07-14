@@ -1,14 +1,14 @@
 import { Navigate, Route, Routes } from "react-router";
 
-import Layout from "./layout/Layout";
-import Register from "./auth/Register";
-import Login from "./auth/Login";
-import ActivitiesPage from "./activities/ActivitiesPage";
+import Layout from "./layout/Layout.jsx";
+import Register from "./auth/Register.jsx";
+import Login from "./auth/Login.jsx";
+import ActivitiesPage from "./activities/ActivitiesPage.jsx";
 import Error404 from "./Error404.jsx";
 
 /**
- * Fitness Trackr is a platform where fitness enthusiasts can share their workouts and
- * discover new routines.
+ * Fitness Trackr is a platform where fitness enthusiasts can share their
+ * workouts and discover new routines.
  */
 export default function App() {
   return (
