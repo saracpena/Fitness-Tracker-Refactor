@@ -18,11 +18,12 @@ export default function Register() {
 
     try {
       await register({ username, password });
+
+      // Go back to the activity list after registration.
       navigate("/activities");
     } catch (error) {
       setError(
         error.response?.data?.message ??
-          error.response?.data?.error ??
           error.message ??
           "Unable to register.",
       );

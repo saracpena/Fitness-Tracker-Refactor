@@ -18,11 +18,12 @@ export default function Login() {
 
     try {
       await login({ username, password });
+
+      // Navigate after the login request has succeeded.
       navigate("/activities");
     } catch (error) {
       setError(
         error.response?.data?.message ??
-          error.response?.data?.error ??
           error.message ??
           "Unable to log in.",
       );
@@ -53,6 +54,5 @@ export default function Login() {
     </>
   );
 }
-
 //Now Link replaces clickable anchors that manually changed context state. 
 // It performs client-side navigation without treating the click as a normal page reload.

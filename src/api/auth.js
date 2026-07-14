@@ -1,21 +1,26 @@
 import axios from "axios";
 
-const API_URL = "https://fitnesstrac-kr.herokuapp.com/api";
+const API = import.meta.env.VITE_API;
 
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export function getErrorMessage(error, fallback = "Something went wrong.") {
-  return (
-    error.response?.data?.message ??
-    error.response?.data?.error ??
-    error.message ??
-    fallback
-  );
+/** Registers a new user and returns the API response data. */
+export async function registerUser(credentials) {
+  const response = await axios.post(`${API}/users/register`, credentials);
+  return response.data;
 }
 
-export default api;
+/** Logs in an existing user and returns the API response data. */
+export async function loginUser(credentials) {
+  const response = await axios.post(`${API}/users/login`, credentials);
+  return response.data;
+}
+
+/** Gets the currently logged-in user. */
+export async function getCurrentUser(token) {
+  const response = await axios.get(`${API}/users/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}

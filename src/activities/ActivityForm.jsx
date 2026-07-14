@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { createActivity } from "../api/activities";
-import { useAuth } from "../auth/AuthContext";
 
-/** Form for a user to create a new activity with a name and description. */
+import { createActivity } from "../api/activities.js";
+import { useAuth } from "../auth/AuthContext.jsx";
+
+/** Form for creating an activity with a name and description. */
 export default function ActivityForm({ syncActivities }) {
   const { token } = useAuth();
 
@@ -16,26 +17,34 @@ export default function ActivityForm({ syncActivities }) {
 
     try {
       await createActivity(token, { name, description });
-      syncActivities();
-    } catch (e) {
-      setError(e.message);
+      await syncActivities();
+    } catch (error) {
+      setError(
+        error.response?.data?.message ??
+          error.message ??
+          "Unable to create activity.",
+      );
     }
   };
 
   return (
     <>
       <h2>Add a new activity</h2>
+
       <form action={tryCreateActivity}>
         <label>
           Name
-          <input type="text" name="name" />
+          <input type="text" name="name" required />
         </label>
+
         <label>
           Description
-          <input type="text" name="description" />
+          <input type="text" name="description" required />
         </label>
-        <button>Add activity</button>
+
+        <button type="submit">Add activity</button>
       </form>
+
       {error && <p role="alert">{error}</p>}
     </>
   );

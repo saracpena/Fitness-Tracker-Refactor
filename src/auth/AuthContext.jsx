@@ -6,16 +6,20 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-import api from "../api/auth.js";
+import {
+  getCurrentUser,
+  loginUser,
+  registerUser,
+} from "../api/auth.js";
 
 const AuthContext = createContext(null);
 
 const TOKEN_STORAGE_KEY = "fitnessTrackrToken";
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => {
-    return localStorage.getItem(TOKEN_STORAGE_KEY);
-  });
+  const [token, setToken] = useState(() =>
+    localStorage.getItem(TOKEN_STORAGE_KEY),
+  );
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(Boolean(token));
@@ -27,17 +31,13 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    const getCurrentUser = async () => {
+    const syncUser = async () => {
       try {
-        const { data } = await api.get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUser(data);
+        const currentUser = await getCurrentUser(token);
+        setUser(currentUser);
       } catch (error) {
         console.error("Unable to retrieve current user:", error);
+
         localStorage.removeItem(TOKEN_STORAGE_KEY);
         setToken(null);
         setUser(null);
@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
       }
     };
 
-    getCurrentUser();
+    syncUser();
   }, [token]);
 
   const saveToken = (newToken) => {
@@ -54,32 +54,26 @@ export function AuthProvider({ children }) {
     setToken(newToken);
   };
 
-  const register = async ({ username, password }) => {
-    const { data } = await api.post("/users/register", {
-      username,
-      password,
-    });
+  const register = async (credentials) => {
+    const data = await registerUser(credentials);
 
-    const newToken = data.token;
+    const newToken = data.token ?? data.data?.token;
 
     if (!newToken) {
-      throw new Error("The registration response did not include a token.");
+      throw Error("Registration did not return a token.");
     }
 
     saveToken(newToken);
     return data;
   };
 
-  const login = async ({ username, password }) => {
-    const { data } = await api.post("/users/login", {
-      username,
-      password,
-    });
+  const login = async (credentials) => {
+    const data = await loginUser(credentials);
 
-    const newToken = data.token;
+    const newToken = data.token ?? data.data?.token;
 
     if (!newToken) {
-      throw new Error("The login response did not include a token.");
+      throw Error("Login did not return a token.");
     }
 
     saveToken(newToken);
@@ -108,7 +102,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
+    throw Error("useAuth must be used within AuthProvider");
   }
 
   return context;

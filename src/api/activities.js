@@ -1,19 +1,26 @@
+import axios from "axios";
+
 const API = import.meta.env.VITE_API;
 
-/** Fetches an array of activities from the API. */
+/** Fetches all activities from the API. */
 export async function getActivities() {
   try {
-    const response = await fetch(API + "/activities");
-    const result = await response.json();
-    return result;
-  } catch (e) {
-    console.error(e);
+    const response = await axios.get(`${API}/activities`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
     return [];
   }
 }
 
+/** Fetches one activity using the ID from the URL. */
+export async function getActivity(id) {
+  const response = await axios.get(`${API}/activities/${id}`);
+  return response.data;
+}
+
 /**
- * Sends a new activity to the API to be created.
+ * Sends a new activity to the API.
  * A valid token is required.
  */
 export async function createActivity(token, activity) {
@@ -21,37 +28,29 @@ export async function createActivity(token, activity) {
     throw Error("You must be signed in to create an activity.");
   }
 
-  const response = await fetch(API + "/activities", {
-    method: "POST",
+  const response = await axios.post(`${API}/activities`, activity, {
     headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(activity),
   });
 
-  if (!response.ok) {
-    const result = await response.json();
-    throw Error(result.message);
-  }
+  return response.data;
 }
 
 /**
- * Requests the API to delete the activity with the given ID.
- * A valid token is required.
+ * Deletes one activity.
+ * Axios can handle a successful empty response without calling response.json().
  */
 export async function deleteActivity(token, id) {
   if (!token) {
     throw Error("You must be signed in to delete an activity.");
   }
 
-  const response = await fetch(API + "/activities/" + id, {
-    method: "DELETE",
-    headers: { Authorization: "Bearer " + token },
+  const response = await axios.delete(`${API}/activities/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
-  if (!response.ok) {
-    const result = await response.json();
-    throw Error(result.message);
-  }
+  return response.data;
 }
