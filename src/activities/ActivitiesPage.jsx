@@ -6,10 +6,21 @@ import ActivityList from "./ActivityList.jsx";
 
 export default function ActivitiesPage() {
   const [activities, setActivities] = useState([]);
+  const [error, setError] = useState(null);
 
   const syncActivities = async () => {
-    const data = await getActivities();
-    setActivities(data);
+    try {
+      setError(null);
+
+      const data = await getActivities();
+
+      // getActivities should always return an array.
+      setActivities(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setActivities([]);
+      setError("Unable to load activities.");
+    }
   };
 
   useEffect(() => {
@@ -19,6 +30,8 @@ export default function ActivitiesPage() {
   return (
     <>
       <h1>Activities</h1>
+
+      {error && <p role="alert">{error}</p>}
 
       <ActivityList activities={activities} />
 

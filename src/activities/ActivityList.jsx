@@ -1,22 +1,17 @@
 import { Link } from "react-router";
 
 export default function ActivityList({ activities }) {
+  const activityList = Array.isArray(activities) ? activities : [];
+
   return (
     <ul>
-      {activities.map((activity) => (
-        <ActivityListItem key={activity.id} activity={activity} />
+      {activityList.map((activity) => (
+        <li key={activity.id}>
+          <Link to={`/activities/${activity.id}`}>
+            {activity.name}
+          </Link>
+        </li>
       ))}
     </ul>
-  );
-}
-
-function ActivityListItem({ activity }) {
-  return (
-    <li>
-      {/* Each activity links to its dynamic details route. */}
-      <Link to={`/activities/${activity.id}`}>
-        {activity.name}
-      </Link>
-    </li>
   );
 }

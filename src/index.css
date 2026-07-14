@@ -25,6 +25,7 @@ header {
 
 header nav {
   display: flex;
+  align-items: center;
   gap: 1ch;
 }
 
@@ -33,6 +34,19 @@ a {
 }
 
 a:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+header button {
+  border: none;
+  padding: 0;
+  color: teal;
+  background: none;
+  font: inherit;
+}
+
+header button:hover {
   cursor: pointer;
   text-decoration: underline;
 }
